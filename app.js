@@ -23,7 +23,7 @@ const usersRoutes = require('./routes/users')
 const campgroundsRoutes = require('./routes/campgrounds')
 const reviewsRoutes = require('./routes/reviews')
 const MongoDBStore = require("connect-mongo")(session)
-const dbUrl = 'mongodb://127.0.0.1:27017/yelp-camp'
+const dbUrl = process.env.DB_URL || 'mongodb://127.0.0.1:27017/yelp-camp'
 
 //dbUrl
 mongoose.connect(dbUrl, {
@@ -50,6 +50,7 @@ app.use(express.static(path.join(__dirname, 'public'))) // this will tell expres
 app.use(mongoSanitize({
     replaceWith: '_',
 }))
+const secret = process.env.SECRET || 'thisshouldbeabettersecret!'
 
 const store = new MongoDBStore({
     url: dbUrl,
@@ -64,7 +65,7 @@ const store = new MongoDBStore({
 const sessionConfig = {
     store, // this meanns store : store
     name : 'dynamite',
-    secret: 'thisshouldbeabettersecret!',
+    secret,
     resave: false,
     saveUninitialized: true,
     cookie: {
